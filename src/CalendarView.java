@@ -1,7 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,7 +9,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
@@ -25,8 +23,15 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-
+/**
+ * CalendarView.java
+ * @author Tyler Lorenzi, Gregory Mayo, Ealrada Piroyan
+ * @version 1.0 08/02/19
+ */
+/*
+ * This class is for following the MVC pattern, which this class is for the view method.
+ * In this class, we set up the view of our button, panel and frame for our calendar.
+ */
 public class CalendarView implements ChangeListener {
 	private CalendarModel model;
 	private MONTHS[] months = MONTHS.values();
@@ -50,6 +55,31 @@ public class CalendarView implements ChangeListener {
 	boolean onMonthView;
 	boolean onWeekView;
 	LocalDate curerntDayOfView; /// NOTE: this doesn't have to be the same as the currentlySelectedDay
+	private View vl;
+	JPanel dayViewPanel;
+    JPanel dayViewPanelDetail;
+	public void setViewLayout(View vl) {
+        this.vl = vl;
+    }
+    public void doViewLayout(String text){
+        if(vl!=null){
+            dayViewPanelDetail.invalidate();
+            vl.layoutText(textArea,text);
+        }
+    }
+    public void doViewLayout(ArrayList<Event> events){
+        if(vl!=null){
+            dayViewPanelDetail.invalidate();
+            vl.layoutText(textArea,events);
+        }
+    }
+	/*
+	 * A function for the mutator for our strategy pattern, where we called the model for the view button
+	 * @param view and local date
+	 */
+	public void mutator(View v, LocalDate d){
+        v.mutate(model, d);
+    }
 	// CONTROLLER
 	/**
 	 * Creates buttons representing all the days in the current month and adds them
@@ -85,11 +115,12 @@ public class CalendarView implements ChangeListener {
 	 * Constructs the calendar.
 	 * @param model the  model that stores and manipulates calendar data
 	 */
-	public CalendarView(CalendarModel m) { //CONTROLLER
+	//CONTROLLER
+	public CalendarView(CalendarModel m) { 
 		this.model = m;
 		numOfDaysinMonth = model.getNumberOfDaysInMonth();
 		monthPanel.setLayout(new GridLayout(0, 7));
-		textArea = new JTextArea(15, 10);
+		textArea = new JTextArea(30, 50);
 		textArea.setEditable(false);
 		createDayButtons();
 		displayDate(model.getCurrentlySelectedDay());  
@@ -101,32 +132,31 @@ public class CalendarView implements ChangeListener {
 					public void actionPerformed(ActionEvent e) {
 						LocalDate current = LocalDate.now();
 						curerntDayOfView = current;
-						if (onMonthView)
-							monthView(current);
-						else if (onWeekView)
-							weekView(current);
-						else // on day view
-						{
-							dayView(current);
-						}
+						if (onMonthView) {
+                            mutator(new MonthView(), curerntDayOfView);
+						} else if (onWeekView) {
+                            mutator(new WeekView(), curerntDayOfView);
+						} else {// on day view
+                            mutator(new DayView(), curerntDayOfView);
+                        }
 					}
 		});
 		next.addActionListener(new ActionListener()  {
 					@Override
-						public void actionPerformed(ActionEvent e) {	
+						public void actionPerformed(ActionEvent e) {
 						if (onMonthView){
-							curerntDayOfView = curerntDayOfView.plusMonths(1).withDayOfMonth(1);
-							monthView(curerntDayOfView);
-
-						}
-						else if (onWeekView){
-							curerntDayOfView = curerntDayOfView.plusDays(7);
-							weekView(curerntDayOfView);
-						}
-						else { // on day view
-							curerntDayOfView = curerntDayOfView.plusDays(1);
-							dayView(curerntDayOfView);
-						}
+                            curerntDayOfView = curerntDayOfView.plusMonths(1).withDayOfMonth(1);
+                            mutator(new MonthView(), curerntDayOfView);
+ 
+                        }
+                        else if (onWeekView){
+                            curerntDayOfView = curerntDayOfView.plusDays(7);
+                            mutator(new WeekView(), curerntDayOfView);
+                        }
+                        else { // on day view
+                            curerntDayOfView = curerntDayOfView.plusDays(1);
+                            mutator(new DayView(), curerntDayOfView);
+                        }
 					}
 		});
 		prev.addActionListener(new ActionListener()  {
@@ -135,42 +165,50 @@ public class CalendarView implements ChangeListener {
 						prev.setEnabled(true);
 						next.setEnabled(true);
 						if (onMonthView) {
-							curerntDayOfView = curerntDayOfView.minusMonths(1).withDayOfMonth(1);		
-							monthView(curerntDayOfView);
-
-						}
-						else if (onWeekView) {
-							curerntDayOfView = curerntDayOfView.minusDays(7);
-							weekView(curerntDayOfView);
-						}
-						else { // on day view
-							curerntDayOfView = curerntDayOfView.minusDays(1);
-							dayView(curerntDayOfView);
-						}
+                            curerntDayOfView = curerntDayOfView.minusMonths(1).withDayOfMonth(1);       
+                            mutator(new MonthView(), curerntDayOfView);
+                        }
+                        else if (onWeekView) {
+                            curerntDayOfView = curerntDayOfView.minusDays(7);
+                            mutator(new WeekView(), curerntDayOfView);
+                        }
+                        else { // on day view
+                            curerntDayOfView = curerntDayOfView.minusDays(1);
+                            mutator(new DayView(), curerntDayOfView);
+                        }
 					}
 		});
 		monthButton.addActionListener(new ActionListener() {
 					@Override
 						public void actionPerformed(ActionEvent e) {
-							monthView(LocalDate.of(model.getCurrentYear(),  model.getCurrentMonth() + 1, model.getCurrentlySelectedDay()));
-							prev.setEnabled(true);
-							next.setEnabled(true);
+							onWeekView = false;
+							onMonthView = true;
+							onDayView = false;
+                            prev.setEnabled(true);
+                            next.setEnabled(true);
+                            mutator(new MonthView(), LocalDate.of(model.getCurrentYear(), model.getCurrentMonth() + 1, model.getCurrentlySelectedDay()));
 						}
 		});
 		weekButton.addActionListener(new ActionListener() {
 					@Override
 						public void actionPerformed(ActionEvent e) {
-						prev.setEnabled(true);
-						next.setEnabled(true);
-						weekView(LocalDate.of(model.getCurrentYear(),  model.getCurrentMonth() + 1, model.getCurrentlySelectedDay()));
+						onWeekView = true;
+                        onMonthView = false;
+                        onDayView = false;
+                        prev.setEnabled(true);
+                        next.setEnabled(true);
+                        mutator(new WeekView(), LocalDate.of(model.getCurrentYear(), model.getCurrentMonth() + 1, model.getCurrentlySelectedDay()));
 					}
 		});
 		dayButton.addActionListener(new ActionListener()  {
 					@Override
 						public void actionPerformed(ActionEvent e) {
-						prev.setEnabled(true);
-						next.setEnabled(true);
-						dayView(LocalDate.of(model.getCurrentYear(),  model.getCurrentMonth() + 1, model.getCurrentlySelectedDay()));
+						onWeekView = false;
+                        onMonthView = false;
+                        onDayView = true;
+                        prev.setEnabled(true);
+                        next.setEnabled(true);
+                        mutator(new DayView(), LocalDate.of(model.getCurrentYear(), model.getCurrentMonth() + 1, model.getCurrentlySelectedDay()));
 					}
 		});
 		create.addActionListener(new ActionListener() {
@@ -327,9 +365,8 @@ public class CalendarView implements ChangeListener {
 		dayScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		dayViewPanel.add(dayScrollPane, constraints);
 		finalContainer.add(monthContainer, BorderLayout.NORTH);
-		finalContainer.add(new JLabel("\n"), BorderLayout.CENTER);
-		finalContainer.add(dayViewPanel, BorderLayout.SOUTH);
 		frame.add(finalContainer);
+		frame.add(dayViewPanel);
 		frame.setLayout(new FlowLayout());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
@@ -382,15 +419,15 @@ public class CalendarView implements ChangeListener {
 					else {
 						createEventDialog("Try again, TIME CONFLICT ERROR: ");
 					}
-					if (!timeConflict && onDayView && d.equals(model.getCurrentLocalDate())) {
-                        model.getEvents(d);
+					if (!timeConflict && onDayView && d.equals(model.getCurrentLocalDate())) {   // CHANGE
+                        mutator(new DayView(), curerntDayOfView);
                     }
-                    else if (!timeConflict && onMonthView && dayOfEvent[0] == model.getCurrentMonth() + 1) {
-                        LocalDate last = d.plusMonths(1).withDayOfMonth(1).minusDays(1);
-                        model.getEvents(LocalDate.of(dayOfEvent[2], dayOfEvent[0], 1), last);
+                    else if (!timeConflict && onMonthView && dayOfEvent[0] == model.getCurrentMonth() + 1) {  
+                        mutator(new MonthView(), d);
+ 
                     }
-                    else if (!timeConflict && onWeekView) {
-                        weekView(LocalDate.of(model.getCurrentYear(), model.getCurrentMonth() + 1, model.getCurrentlySelectedDay()));
+                    else if (!timeConflict && onWeekView) {  // week
+                        mutator(new WeekView(), LocalDate.of(model.getCurrentYear(), model.getCurrentMonth() + 1, model.getCurrentlySelectedDay()));
                     }
                     else if (!timeConflict && model.getCurrentYear() == dayOfEvent[2] && model.getCurrentMonth() + 1 == dayOfEvent[0] && model.getCurrentlySelectedDay() == dayOfEvent[1])
                         displayDate(dayOfEvent[1]);
@@ -445,46 +482,6 @@ public class CalendarView implements ChangeListener {
 		dialog.add(submit, c);
 		dialog.pack();
 		dialog.setVisible(true);
-	}
-	/**
-	 * @param d LocalDate of day's events 
-	 *  to get adds a day's events to the GUI's text area
-	 */
-	public void dayView(LocalDate d) { 
-		onWeekView = false;
-		onMonthView = false;
-		onDayView = true;
-		model.getEvents(d);	
-	}
-	/**
-	 *  @param date LocalDate in a week to get the entire week's events adds a week's 
-	 *  events to the GUI's text area
-	 */
-	public void weekView(LocalDate date) {
-		onWeekView = true;
-		onMonthView = false;
-		onDayView = false;
-		LocalDate start = date;
-		LocalDate end = date;
-		DayOfWeek day = date.getDayOfWeek();
-		int d = day.getValue();
-		if (d == 7) 
-			d = 0;   
-        start = start.minusDays(d);	
-		end = end.plusDays(7 - d - 1);
-		model.getEvents(start,end);
-	}
-	/**
-	 * @param date LocalDate in a month to get the entire month's events
-	 * adds a month's events to the GUI's text area
-	 */
-	public void monthView(LocalDate date) {
-		onWeekView = false;
-		onMonthView = true;
-		onDayView = false;
-		LocalDate start = LocalDate.of(date.getYear(), date.getMonth(), 1);
-		LocalDate end = date.plusMonths(1).withDayOfMonth(1).minusDays(1);
-		model.getEvents(start, end);
 	}
 	/**
 	 * Shows the selected date and events on that date.
