@@ -1,7 +1,14 @@
+import java.time.LocalDate;
+/**
+ * Event.java
+ * @author Tyler Lorenzi, Gregory Mayo, Ealrada Piroyan
+ * @version 1.0 08/02/19
+ */
 class Event {
 	private String name;
 	private int startTime;
 	private int endTime;
+    private LocalDate date;
 	/**
 	 * Constructor creates an event with the specified parameters
 	 * @param startTime int representing the hour the event's start time
@@ -34,4 +41,16 @@ class Event {
 	public String getName() {
 		return name;
 	}
+	/**
+     * @return the date
+     */
+    public LocalDate getDate() {
+        return date;
+    }
+    /**
+     * @param date the date to set
+     */
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
 }
