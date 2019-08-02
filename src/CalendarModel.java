@@ -11,7 +11,11 @@ import java.util.HashMap;
 import java.util.Scanner;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
+/**
+ * CalendarModel.java
+ * @author Tyler Lorenzi, Gregory Mayo, Ealrada Piroyan
+ * @version 1.0 08/02/19
+ */
 public class CalendarModel {
 	private String textToDisplay = ""; // use this inside of the view with a getter 
     private boolean changeInTextDisplay = false;
@@ -31,14 +35,12 @@ public class CalendarModel {
 		calendar = new HashMap<LocalDate, ArrayList<Event>>();
 	}
 	/**
-     * 
      * @return true if there has been a change in text display
      */
     public boolean getChangeInDisplay() {
         return changeInTextDisplay;
     }
     /**
-     * 
      * @return String of events to be displayed to the view
      */
     public String getTextDisplay() {
@@ -66,27 +68,6 @@ public class CalendarModel {
         textToDisplay = eventsForTheDay;
         update();
     }
-    /**
-     * gets events on single/given day in order of start time
-     * @param d LocalDate to get events of
-     */
-    public void getEventsHelper(LocalDate d) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy");      
-        changeInTextDisplay = true;
-        String eventsForTheDay = "";
-        if(!calendar.containsKey(d))
-            textToDisplay =   "\n" +  "No events today";
-        else {
-            sortDay(calendar.get(d));
-            ArrayList<Event> events = calendar.get(d);
-            for(Event event : events) {
-                eventsForTheDay = eventsForTheDay + "                                           " +
-                            formatter.format(d) + "\n" + event.getStartTime() + ":00" + " - " + event.getEndTime() + ":00  " +
-                            event.getName() + "\n";
-            }
-        }
-        textToDisplay = eventsForTheDay;
-    }
 	/**
 	 * Gets events for a given time frame
 	 * @param d1 LocalDate - start date
@@ -110,6 +91,129 @@ public class CalendarModel {
         textToDisplay = listOfAllEvents;
         update();
 	}
+	/**
+     * gets events on single/given day in order of start time
+     * @param d LocalDate to get events of
+     */
+    public void getEventsHelper(LocalDate d) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy");      
+        changeInTextDisplay = true;
+        String eventsForTheDay = "";
+        if(!calendar.containsKey(d))
+            textToDisplay =   "\n" +  "No events today";
+        else {
+            sortDay(calendar.get(d));
+            ArrayList<Event> events = calendar.get(d);
+            for(Event event : events) {
+                eventsForTheDay = eventsForTheDay + "                                           " +
+                            formatter.format(d) + "\n" + event.getStartTime() + ":00" + " - " + event.getEndTime() + ":00  " +
+                            event.getName() + "\n";
+            }
+        }
+        textToDisplay = eventsForTheDay;
+    }
+    /**
+	 * Gets events for day
+	 * @param d1 LocalDate - start date
+	 */
+	public void getEventsDay(LocalDate d) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy");      
+        changeInTextDisplay = true;
+        String eventsForTheDay = "";
+        if(!calendar.containsKey(d))
+            eventsForTheDay = "                                           " + formatter.format(d) + "\n"+"No events today";
+        else {
+            sortDay(calendar.get(d));
+            ArrayList<Event> events = calendar.get(d);
+            eventsForTheDay =  "                                           " + formatter.format(d) + "\n";
+            for(Event event : events) {
+                eventsForTheDay = eventsForTheDay +
+                              event.getStartTime() + ":00" + " - " + event.getEndTime() + ":00  " +
+                            event.getName() + "\n";
+            }
+        }
+        textToDisplay = eventsForTheDay;
+        update();
+	}
+	/**
+	 * Gets events for week
+	 * @param d1 LocalDate - start date
+	 * @param d2 LocalDate  - end date
+	 */
+	public void getEventsWeek(LocalDate d1, LocalDate d2) {
+		changeInTextDisplay = true;
+		String listOfAllEvents = new String();  
+		LocalDate current = d1;
+		while (!current.equals(d2)) {
+				if (calendar.containsKey(current)) {
+					getEventsHelperWeek(current);
+                listOfAllEvents = listOfAllEvents   + textToDisplay ; 
+				}
+			current = current.plusDays(1);
+		}
+		if (!d1.equals(d2) && calendar.containsKey(d2)) {
+            getEventsHelperWeek(d2);
+            listOfAllEvents = listOfAllEvents   + textToDisplay ;
+        }
+        textToDisplay = listOfAllEvents + "\n";
+        update();
+	}
+	public void getEventsHelperWeek(LocalDate d) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy");
+        changeInTextDisplay = true;
+        String eventsForTheDay = "";
+        if(calendar.containsKey(d)){
+            sortDay(calendar.get(d));
+            ArrayList<Event> events = calendar.get(d);
+            eventsForTheDay =  "                                           " + formatter.format(d) + "\n";
+            for(Event event : events) {
+                eventsForTheDay = eventsForTheDay + event.getStartTime() + ":00" + " - " + event.getEndTime() + ":00  " + event.getName() + "\n";
+            }
+            eventsForTheDay = eventsForTheDay + "\n";
+        } else {
+        	eventsForTheDay = "No event this week!";
+        }
+        textToDisplay = eventsForTheDay;
+    }
+	/**
+	 * Gets events for month
+	 * @param d1 LocalDate - start date
+	 * @param d2 LocalDate  - end date
+	 */
+	public void getEventsMonth(LocalDate d1, LocalDate d2) {
+		changeInTextDisplay = true;
+		String listOfAllEvents = new String();  
+		LocalDate current = d1;
+		while (!current.equals(d2)) {
+				if (calendar.containsKey(current)) {
+					getEventsHelperMonth(current);
+                listOfAllEvents = listOfAllEvents   + textToDisplay ; 
+				}
+			current = current.plusDays(1);
+		}
+		if (!d1.equals(d2) && calendar.containsKey(d2)) {
+            getEventsHelperMonth(d2);
+            listOfAllEvents = listOfAllEvents   + textToDisplay + "\n";
+        }
+        textToDisplay = listOfAllEvents;
+        update();
+	}
+	public void getEventsHelperMonth(LocalDate d) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy");
+		changeInTextDisplay = true;
+        String eventsForTheDay = "";
+        if(!calendar.containsKey(d)){
+        	eventsForTheDay = "No event this month!";
+        } else {
+            sortDay(calendar.get(d));
+            ArrayList<Event> events = calendar.get(d);
+            for(Event event : events) {
+                eventsForTheDay = eventsForTheDay + "                                           " + formatter.format(d) + "\n" + event.getStartTime() + ":00" + " - " + event.getEndTime() + ":00  " + event.getName() + "\n";
+            }
+        }
+        textToDisplay = eventsForTheDay;
+		
+    }
 	/**
 	 * 
 	 * @param date LocalDate to see if there is an overlap on
@@ -135,6 +239,11 @@ public class CalendarModel {
 		}
 		return false;
 	}
+	/*
+	 * This function is to check which month we are going to use
+	 * @param int, the number of the month
+	 * @return String, the name of the month
+	 */
 	public String getStringMonth(int i) { // USE THIS IN VIEW
 		switch(i) {
 			case 1:
@@ -203,9 +312,16 @@ public class CalendarModel {
         current = date;
         update();
 	}
+	/*
+	 * this function is to get if the button is selected or not
+	 * @return ChangeInSelectedDay
+	 */
 	public boolean getChangeInSelectedDay() {
         return ChangeInSelectedDay;
     }
+	/*
+	 * this function is to reset the day button
+	 */
     public void resetChangeInSelectedDay() {
         ChangeInSelectedDay = false;
     }
@@ -378,7 +494,7 @@ public class CalendarModel {
 							case "W":
 								dayInt = 3;
 								break;
-							case "R":
+							case "H":
 								dayInt = 4;
 								break;
 							case "F":
