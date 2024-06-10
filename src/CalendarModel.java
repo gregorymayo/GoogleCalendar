@@ -76,13 +76,13 @@ public class CalendarModel {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy");
 		changeInTextDisplay = true;
 		String eventsForTheDay = "";
-		if (!calendar.containsKey(d))
+		if(!calendar.containsKey(d)) {
 			eventsForTheDay = formatter.format(d) + "\n" + "No events today";
-		else {
+		} else {
 			ArrayList<Event> eventList = calendar.get(d);
 			dates.add(d);
 			events.add(eventList);
-			for (Event event : eventList) {
+			for(Event event : eventList) {
 				eventsForTheDay = eventsForTheDay + "                                           " + formatter.format(d)
 						+ "\n" + event.getStartTime() + ":00" + " - " + event.getEndTime() + ":00  " + event.getName()
 						+ "\n";
@@ -103,12 +103,12 @@ public class CalendarModel {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy");
 		changeInTextDisplay = true;
 		String eventsForTheDay = "";
-		if (!calendar.containsKey(d))
+		if(!calendar.containsKey(d)) {
 			textToDisplay = "\n" + "No events today";
-		else {
+		} else {
 			sortDay(calendar.get(d));
 			eventList = calendar.get(d);
-			for (Event event : eventList) {
+			for(Event event : eventList) {
 				eventsForTheDay = eventsForTheDay + "                                           " + formatter.format(d)
 						+ "\n" + event.getStartTime() + ":00" + " - " + event.getEndTime() + ":00  " + event.getName()
 						+ "\n";
@@ -131,8 +131,8 @@ public class CalendarModel {
 		changeInTextDisplay = true;
 		String listOfAllEvents = new String();
 		LocalDate current = d1;
-		while (!current.equals(d2)) {
-			if (calendar.containsKey(current)) {
+		while(!current.equals(d2)) {
+			if(calendar.containsKey(current)) {
 				List<Event> eventsList = getEventsHelper(current);
 				dates.add(current);
 				events.add(eventsList);
@@ -140,7 +140,7 @@ public class CalendarModel {
 			}
 			current = current.plusDays(1);
 		}
-		if (!d1.equals(d2) && calendar.containsKey(d2)) {
+		if(!d1.equals(d2) && calendar.containsKey(d2)) {
 			List<Event> eventsList = getEventsHelper(d2);
 			dates.add(d2);
 			events.add(eventsList);
@@ -157,21 +157,21 @@ public class CalendarModel {
 	 * @return true if there is a time conflict
 	 */
 	public boolean overlap(LocalDate date, Event e) {
-		if (calendar.containsKey(date)) {
+		if(calendar.containsKey(date)) {
 			ArrayList<Event> list = calendar.get(date);
-			for (Event current : list) {
+			for(Event current : list) {
 				int currentStart = current.getStartTime();
 				int checkStart = e.getStartTime();
 				int currentEnd = current.getEndTime();
 				int checkEnd = e.getEndTime();
-				if (currentStart == checkStart || checkEnd == currentEnd || currentStart == checkEnd
-						|| checkStart == currentEnd)
+				if(currentStart == checkStart || checkEnd == currentEnd || currentStart == checkEnd  ||
+						checkStart == currentEnd) {
 					return true;
-				else if (currentStart >= checkStart && checkEnd >= currentEnd)
+				} else if(currentStart >= checkStart && checkEnd >= currentEnd) {
 					return true;
-
-				else if (checkEnd >= currentStart && currentEnd >= checkStart)
+				} else if(checkEnd >= currentStart && currentEnd >= checkStart) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -185,7 +185,7 @@ public class CalendarModel {
 	 * @return String, the name of the month
 	 */
 	public String getStringMonth(int i) { // USE THIS IN VIEW
-		switch (i) {
+		switch(i) {
 		case 1:
 			return "January";
 		case 2:
@@ -246,7 +246,7 @@ public class CalendarModel {
 	 * update the ChangeListeners by calling statechanged() for each listener
 	 */
 	public void update() {
-		for (ChangeListener l : changeListeners) {
+		for(ChangeListener l : changeListeners) {
 			l.stateChanged(new ChangeEvent(this));
 		}
 	}
@@ -353,11 +353,12 @@ public class CalendarModel {
 	 * moves current day forward by a single day
 	 */
 	public void nextDay() { // edit
-		if (current + 1 > gregorianCal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+		if(current + 1 > gregorianCal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
 			nextMonth();
 			current = 1;
-		} else
+		} else {
 			current++;
+		}
 		update();
 	}
 
@@ -365,11 +366,12 @@ public class CalendarModel {
 	 * moves current day backward by a single day
 	 */
 	public void previousDay() { // edit
-		if (current == 1) {
+		if(current == 1) {
 			previousMonth();
 			current = gregorianCal.getActualMaximum(Calendar.DAY_OF_MONTH);
-		} else
+		} else {
 			current--;
+		}
 		update();
 	}
 
@@ -399,7 +401,7 @@ public class CalendarModel {
 	public void createEvent(String name, int start, int end) { // creates events through the create button
 		LocalDate day = LocalDate.of(getCurrentYear(), getCurrentMonth() + 1, current);
 		Event e = new Event(name, start, end);
-		if (calendar.containsKey(day)) {
+		if(calendar.containsKey(day)) {
 			ArrayList<Event> list = calendar.get(day);
 			list.add(e);
 			calendar.put(day, list);
@@ -417,7 +419,7 @@ public class CalendarModel {
 	 * @param e - Event to add
 	 */
 	public void addEvent(LocalDate d, Event e) {
-		if (calendar.containsKey(d)) {
+		if(calendar.containsKey(d)) {
 			ArrayList<Event> list = calendar.get(d);
 			list.add(e);
 			calendar.put(d, list);
@@ -459,8 +461,8 @@ public class CalendarModel {
 			LocalDate startDay = LocalDate.of(year, startMonth, 1);
 			LocalDate endDay = LocalDate.of(year, endMonth + 1, 1);
 			Event event = new Event(name, start, end);
-			while (!startDay.equals(endDay)) {
-				for (int i = 0; i < days.length; i++) {
+			while(!startDay.equals(endDay)) {
+				for(int i = 0; i < days.length; i++) {
 					switch (days[i]) {
 					case "M":
 						dayInt = 1;
@@ -484,7 +486,7 @@ public class CalendarModel {
 						dayInt = 7;
 						break;
 					}
-					if (startDay.getDayOfWeek().getValue() == dayInt && !(overlap(startDay, event)))
+					if(startDay.getDayOfWeek().getValue() == dayInt && !(overlap(startDay, event)))
 						addEvent(startDay, event);
 				}
 				startDay = startDay.plusDays(1);
@@ -510,5 +512,4 @@ public class CalendarModel {
 	public List<LocalDate> getDates() {
 		return dates;
 	}
-
 }

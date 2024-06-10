@@ -14,28 +14,28 @@ public class DayLayout implements ViewLayout{
      * @param dates
      * @param events
      */
-    public void format(JTextArea output, List<LocalDate> dates, List<List<Event>> events){
+    public void format(JTextArea output, List<LocalDate> dates, List<List<Event>> events) {
         //no dates, do not format
-        if (dates.isEmpty()){
+        if(dates.isEmpty()) {
             return;
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy");          
         final int length = 50;//length of each line
         StringBuilder content = new StringBuilder();//content of output
         //-----------------
-        for (int i = 0; i < length; i++){
+        for(int i = 0; i < length; i++) {
             content.append("-");  
         }
         content.append('\n');
         content.append(String.format("|%" + (length - 2) + "s|\n", "Events"));
         //-----------------
-        for (int i = 0; i < length; i++){
+        for(int i = 0; i < length; i++) {
             content.append("-");  
         }
         content.append('\n');
         content.append(String.format("|%" + (length - 2) + "s|\n", formatter.format(dates.get(0))));
         //-----------------
-        for (int i = 0; i < length; i++){
+        for(int i = 0; i < length; i++) {
             content.append("-");  
         }
         content.append('\n');

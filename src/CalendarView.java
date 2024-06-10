@@ -65,12 +65,12 @@ public class CalendarView implements ChangeListener {
 	 * to an array list and adds them to the month panel.
 	 */
 	private void createDayButtons() {
-		for (int x = 0; x < model.getDayInWeek(1) - 1; x++) { // this adds blank buttons to make sure the days are in the correct spots
+		for(int x = 0; x < model.getDayInWeek(1) - 1; x++) { // this adds blank buttons to make sure the days are in the correct spots
 			JButton filling = new JButton();
 				filling.setEnabled(false);
 				monthPanel.add(filling);
 			}
-			for (int i = 1; i <= numOfDaysinMonth; i++) {
+			for(int i = 1; i <= numOfDaysinMonth; i++) {
 				final int j = i;
 				JButton day = new JButton(Integer.toString(i));
 				day.addActionListener(new ActionListener() {
@@ -90,6 +90,7 @@ public class CalendarView implements ChangeListener {
 				dayButtons.add(day); // add each button to arraylist containing the month's day buttons
 			}
 		}
+
 	/**
 	 * Constructs the calendar.
 	 * @param model the  model that stores and manipulates calendar data
@@ -112,11 +113,11 @@ public class CalendarView implements ChangeListener {
 					public void actionPerformed(ActionEvent e) {
 						LocalDate current = LocalDate.now();
 						curerntDayOfView = current;
-						if (onMonthView)
-                            monthView(current);
-                        else if (onWeekView)
-                            weekView(current);
-                        else { // on day view
+						if(onMonthView) {
+							monthView(current);
+						} else if(onWeekView) {
+							weekView(current);
+						} else { // on day view
                             dayView(current);
                         }
                     }
@@ -124,15 +125,13 @@ public class CalendarView implements ChangeListener {
 		next.addActionListener(new ActionListener()  {
 					@Override
 						public void actionPerformed(ActionEvent e) {
-						if (onMonthView){
+						if(onMonthView) {
                             curerntDayOfView = curerntDayOfView.plusMonths(1).withDayOfMonth(1);
                             monthView(curerntDayOfView);
-                        }
-                        else if (onWeekView){
+                        } else if(onWeekView) {
                             curerntDayOfView = curerntDayOfView.plusDays(7);
                             weekView(curerntDayOfView);
-                        }
-                        else { // on day view
+                        } else { // on day view
                             curerntDayOfView = curerntDayOfView.plusDays(1);
                             dayView(curerntDayOfView);
                         }
@@ -144,15 +143,13 @@ public class CalendarView implements ChangeListener {
 						public void actionPerformed(ActionEvent e) {
 						prev.setEnabled(true);
 						next.setEnabled(true);
-						if (onMonthView) {
+						if(onMonthView) {
                             curerntDayOfView = curerntDayOfView.minusMonths(1).withDayOfMonth(1);       
                             monthView(curerntDayOfView);
-                        }
-                        else if (onWeekView) {
+                        } else if(onWeekView) {
                             curerntDayOfView = curerntDayOfView.minusDays(7);
                             weekView(curerntDayOfView);
-                        }
-                        else { // on day view
+                        } else { // on day view
                             curerntDayOfView = curerntDayOfView.minusDays(1);
                             dayView(curerntDayOfView);
                         }
@@ -213,24 +210,24 @@ public class CalendarView implements ChangeListener {
 				submit.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						if (startDay.getText().isEmpty() || endDay.getText().isEmpty()) 
+						if(startDay.getText().isEmpty() || endDay.getText().isEmpty()) {
 							return;
-						else {
+						} else {
 							dialog.dispose();							
 							String[] start = startDay.getText().split("/");
 							String[] end = endDay.getText().split("/");
-							if (start[2].length() == 2) {
+							if(start[2].length() == 2) {
 								start[2] = "20" + start[2];
 							}
-							if (end[2].length() == 2) {
+							if(end[2].length() == 2) {
 								end[2] = "20" + end[2];
 							}
 							int[] startArray = new int[] {0,0,0};
-							for (int i = 0; i < start.length; i++) {
+							for(int i = 0; i < start.length; i++) {
 								startArray[i] = Integer.parseInt(start[i]);
 							}
 							int[] endArray = new int[] {0,0,0};
-							for (int i = 0; i < end.length; i++) {
+							for(int i = 0; i < end.length; i++) {
 								endArray[i] = Integer.parseInt(end[i]);
 							}
 							LocalDate d1 = LocalDate.of(startArray[2], startArray[0], startArray[1]);
@@ -260,10 +257,9 @@ public class CalendarView implements ChangeListener {
 				submit.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						if (fileNameInput.getText().isEmpty()) {
+						if(fileNameInput.getText().isEmpty()) {
 							return;
-						}
-						else {
+						} else {
 							dialog.dispose();
 							String fileName = fileNameInput.getText();
 							try {
@@ -343,6 +339,7 @@ public class CalendarView implements ChangeListener {
 		frame.pack();
 		frame.setVisible(true);
 	}
+
 	// CONTROLLER HELPER METHODS
 	/**
 	 * creates a border around selected date and puts a border around current date 
@@ -350,11 +347,13 @@ public class CalendarView implements ChangeListener {
 	 * @param dayToSelect day to select
 	 */
 	private void pickDay(int dayToSelect) {  
-		if (currentlyPickedDay != -1)  // DONT REMOVE
+		if(currentlyPickedDay != -1) {  // DON'T REMOVE
 			dayButtons.get(currentlyPickedDay).setBorder(new JButton().getBorder());
+		}
 		currentlyPickedDay = dayToSelect;
 		dayButtons.get(dayToSelect).setBorder(new LineBorder(Color.RED, 1));
-	}	
+	}
+
 	/**
 	 * Creates an event on the selected date through user input.
 	 * @param txt String
@@ -371,38 +370,37 @@ public class CalendarView implements ChangeListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dialog.dispose();
-				if (date.getText().split("/").length != 3 ||eventText.getText().isEmpty() || timeStart.getText().isEmpty() || timeEnd.getText().isEmpty() || date.getText().isEmpty()) {
+				if(date.getText().split("/").length != 3 ||eventText.getText().isEmpty() || timeStart.getText().isEmpty() || timeEnd.getText().isEmpty() || date.getText().isEmpty()) {
 					return;
 				} else {
 					String start = timeStart.getText();
 					String end = timeEnd.getText();
 					String[] dateArray = date.getText().split("/");
-					int[] dayOfEvent = new int[] {0,0,0};
-					if (dateArray[2].length() == 2)
+					int[] dayOfEvent = new int[]{0, 0, 0};
+					if(dateArray[2].length() == 2) {
 						dateArray[2] = "20" + dateArray[2];
-					for (int i = 0; i < dayOfEvent.length; i++) {
+					}
+					for(int i = 0; i < dayOfEvent.length; i++) {
 						dayOfEvent[i] = Integer.parseInt(dateArray[i]);
 					}
 					Event ev = new Event(eventText.getText(), Integer.valueOf(start), Integer.valueOf(end));
 					LocalDate d = LocalDate.of(dayOfEvent[2], dayOfEvent[0], dayOfEvent[1]);
 					boolean timeConflict = model.overlap(d, ev);
-					if (!timeConflict)
+					if(!timeConflict) {
 						model.addEvent(d, ev);
-					else {
+					} else {
 						createEventDialog("Try again, TIME CONFLICT ERROR: ");
 					}
-					if (!timeConflict && onDayView && d.equals(model.getCurrentLocalDate())) {
-                        model.getEvents(d);
-                    }
-                    else if (!timeConflict && onMonthView && dayOfEvent[0] == model.getCurrentMonth() + 1) {
-                        LocalDate last = d.plusMonths(1).withDayOfMonth(1).minusDays(1);
-                        model.getEvents(LocalDate.of(dayOfEvent[2], dayOfEvent[0], 1), last);
-                    }
-                    else if (!timeConflict && onWeekView) {
-                        weekView(LocalDate.of(model.getCurrentYear(), model.getCurrentMonth() + 1, model.getCurrentlySelectedDay()));
-                    }
-                    else if (!timeConflict && model.getCurrentYear() == dayOfEvent[2] && model.getCurrentMonth() + 1 == dayOfEvent[0] && model.getCurrentlySelectedDay() == dayOfEvent[1])
-                        displayDate(dayOfEvent[1]);
+					if(!timeConflict && onDayView && d.equals(model.getCurrentLocalDate())) {
+						model.getEvents(d);
+					} else if(!timeConflict && onMonthView && dayOfEvent[0] == model.getCurrentMonth() + 1) {
+						LocalDate last = d.plusMonths(1).withDayOfMonth(1).minusDays(1);
+						model.getEvents(LocalDate.of(dayOfEvent[2], dayOfEvent[0], 1), last);
+					} else if(!timeConflict && onWeekView) {
+						weekView(LocalDate.of(model.getCurrentYear(), model.getCurrentMonth() + 1, model.getCurrentlySelectedDay()));
+					} else if(!timeConflict && model.getCurrentYear() == dayOfEvent[2] && model.getCurrentMonth() + 1 == dayOfEvent[0] && model.getCurrentlySelectedDay() == dayOfEvent[1]) {
+						displayDate(dayOfEvent[1]);
+					}
 				}
 			}
 		});
@@ -414,8 +412,9 @@ public class CalendarView implements ChangeListener {
 		c.gridy = 1;
 	    c.anchor = GridBagConstraints.LINE_START;
 	    JLabel l4 = new JLabel(txt + "date of event in following format: mm/dd/yyyy");
-	    if (!txt.contentEquals(""))
-	    	l4.setForeground(Color.RED);
+	    if(!txt.contentEquals("")) {
+			l4.setForeground(Color.RED);
+		}
 		dialog.add(l4, c);
 	    c.anchor = GridBagConstraints.CENTER;
 		c.gridy = 2;
@@ -425,7 +424,7 @@ public class CalendarView implements ChangeListener {
 		c.weightx = 1.0;
 	    c.anchor = GridBagConstraints.LINE_START;
 	    JLabel l1 = new JLabel("Name of Event");
-	    if (!txt.contentEquals(""))
+	    if(!txt.contentEquals(""))
 	    	l1.setForeground(Color.RED);
 		dialog.add(l1, c);
 		c.gridy = 5;
@@ -437,14 +436,14 @@ public class CalendarView implements ChangeListener {
 		c.weightx = 0.0;
 	    c.anchor = GridBagConstraints.LINE_START;
 	    JLabel l2 = new JLabel(txt + "Start Hour (0-24)");
-	    if (!txt.contentEquals(""))
+	    if(!txt.contentEquals(""))
 	    	l2.setForeground(Color.RED);
 		dialog.add(l2, c);
 	    c.gridy = 8;
 		dialog.add(timeStart, c);
 		c.gridy = 10;
 		JLabel l3 = new JLabel(txt + "End Hour (0-24)");
-	    if (!txt.contentEquals(""))
+	    if(!txt.contentEquals(""))
 	    	l3.setForeground(Color.RED);
 		dialog.add(l3, c);
 		c.gridy = 11;
@@ -455,6 +454,7 @@ public class CalendarView implements ChangeListener {
 		dialog.pack();
 		dialog.setVisible(true);
 	}
+
 	/**
      * to get adds a day's events to the GUI's text area
      * @param d LocalDate of day's events 
@@ -468,6 +468,7 @@ public class CalendarView implements ChangeListener {
         onDayView = true;
         model.getEvents(d); 
     }
+
     /**
      *  @param date LocalDate in a week to get the entire week's events adds a week's 
      *  events to the GUI's text area
@@ -482,12 +483,14 @@ public class CalendarView implements ChangeListener {
         LocalDate end = date;
         DayOfWeek day = date.getDayOfWeek();
         int d = day.getValue();
-        if (d == 7) 
-            d = 0;   
+        if(d == 7) {
+			d = 0;
+		}
         start = start.minusDays(d); 
         end = end.plusDays(7 - d - 1);
         model.getEvents(start,end);
     }
+
     /**
      * @param date LocalDate in a month to get the entire month's events
      * adds a month's events to the GUI's text area
@@ -502,6 +505,7 @@ public class CalendarView implements ChangeListener {
         LocalDate end = date.plusMonths(1).withDayOfMonth(1).minusDays(1);
         model.getEvents(start, end);
     }
+
 	/**
 	 * Shows the selected date and events on that date.
 	 * @param i the selected date
@@ -512,12 +516,13 @@ public class CalendarView implements ChangeListener {
 		model.setCurrentlySelectedDay(i);
         model.getEvents(d);
     }
+
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		if (model.monthStateChanged()|| model.getChangeInDisplay() || model.getChangeInSelectedDay()) {
+		if(model.monthStateChanged()|| model.getChangeInDisplay() || model.getChangeInSelectedDay()) {
 			textArea.setText(model.getTextDisplay());
 			//format the layout
-            if (viewLayout != null){
+            if(viewLayout != null) {
                 viewLayout.format(textArea, model.getDates(), model.getEvents());
             }
             model.resetChangeInTestDisplay();
@@ -537,13 +542,15 @@ public class CalendarView implements ChangeListener {
 			pickDay(model.getCurrentlySelectedDay() - 1);
 		}
 	}
+
 	/**
      * sets view layout for day, week, and month views
      * @param vl Viewlayout 
      */
-    public void setViewLayout(ViewLayout vl){
+    public void setViewLayout(ViewLayout vl) {
         this.viewLayout = vl;
     }
+
     /**
      * get text area 
      * @return text area
